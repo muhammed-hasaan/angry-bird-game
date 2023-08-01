@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset='utf-8'>
+  <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+  <title>Page Title</title>
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+  <style>
+    .coin {
+      width: 50px;
+      height: 50px;
+      border: 2px solid yellow;
+      background-color: yellow;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      font-size: 50px;
+      position: absolute;
+      border-radius: 50px;
+      color: orange;
+    }
+  </style>
+</head>
+
+<body
+  style="background-image: url('https://i.pinimg.com/originals/3e/86/0d/3e860d2e061e24f4309a98a3bc16028a.jpg');background-repeat:no-repeat; background-size: 100%; height: 70vh;">
+  <button id="btn"
+    style="display: flex; justify-content: center; align-items: center; width: 100px; height: 30px; background: white; border: 1px solid red; color: red; border-radius: 50px;">Instructions</button>
+  <button id="btn1"
+    style="display: none;  width: 100px; height: 30px; background: white; border: 1px solid red; color: red; border-radius: 50px;">close</button>
+  <br><br>
+  <div id="dropdown" class="contdown"
+    style="width: 230px; padding: 10px; column-gap: 20px; row-gap:10px; font-size: 20px;  border: 2px solid black; display: none; flex-direction: column; justify-content: center; align-items: center; background-color: white; border: 1px solid red;">
+    <div class="child">press rigth arrow to move right</div>
+    <div class="child">press left arrow to move left</div>
+    <div class="child">press down arrow to move down </div>
+    <div class="child">press spacebar to jump up </div>
+  </div>
+  <center>
+    <div id="score" style="font-size: 50px; font-family: sans-serif; color:red;">Score: 0</div>
+  </center>
+
+  <div class="game" id="game">
+    <div
+      style="display: flex; justify-content: left; padding: 0px 20px 20px 20px;  align-items: flex-end; height: 65vh;"
+      class="cont">
+      <div style="width: 100px;  height: 100px;" id="class1">
+        <img style="mix-blend-mode:darken; background-color: red; margin-top: 100px;" id="img1"
+          src="https://th.bing.com/th/id/OIP._R_m1ZIVfCWfA9KSfClF5gHaHA?pid=ImgDet&rs=1" width="200px" height="200px"
+          alt="">
+      </div>
+    </div>
+  </div>
+
+  <script>
+
+
+    var down = document.getElementById("btn");
+    var down1 = document.getElementById("btn1");
+    down.addEventListener("click", () => {
+      var show = document.getElementById("dropdown");
+      var game = document.getElementById("game");
+      show.style.display = "flex"
+      game.style.diaplay = "none"
+      down.style.display = "none"
+      down1.style.display = "block"
+    })
+    down1.addEventListener("click", () => {
+      var show = document.getElementById("dropdown");
+      down1.style.display = "none"
+      down.style.display = "flex"
+      show.style.display = "none"
+
+    })
+
+
+
+
+    var jump = 10;
+    var jump1 = 10;
+    var jump2 = 10;
+    var jump3 = 10;
+    var score = 0;
+    var isColliding = false;
+
+    function createCoin() {
+      if (isColliding) {
+        return;
+      }
+
+      var coin = document.createElement('div');
+      coin.classList.add('coin');
+      coin.textContent = "$"
+      var posX = Math.random() * (window.innerWidth - 50);
+      var posY = Math.random() * (window.innerHeight - 50);
+      coin.style.left = posX + 'px';
+      coin.style.top = posY + 'px';
+      document.body.appendChild(coin);
+
+      // Collision detection with the bird (img1)
+      function checkCollision() {
+        var birdRect = document.getElementById('img1').getBoundingClientRect();
+        var coinRect = coin.getBoundingClientRect();
+
+        if (
+          birdRect.left < coinRect.right &&
+          birdRect.right > coinRect.left &&
+          birdRect.top < coinRect.bottom &&
+          birdRect.bottom > coinRect.top
+        ) {
+          score++;
+          localStorage.setItem("score", JSON.stringify(score));
+          var getscore = JSON.parse(localStorage.getItem("score"));
+
+          document.getElementById('score').innerText = 'Score: ' + getscore;
+          if (score == 5) {
+            swal("You got 5 score", "success")
+            swal({
+              title: "Successfully",
+              text: "you got 5 points 👌",
+            })
+              .then((willDelete) => {
+                if (willDelete) {
+                } else {
+                  console.log("You are resumed");
+                }
+              });
+          }
+          if (score == 10) {
+            swal("You got 5 score", "success")
+            swal({
+              title: "Successfully",
+              text: "you got 10 points 👌",
+            })
+              .then((willDelete) => {
+                if (willDelete) {
+                } else {
+                  console.log("You are resumed");
+                }
+              });
+          }
+          isColliding = true;
+          coin.remove();
+          setTimeout(() => {
+            isColliding = false;
+            createCoin();
+          }, 1000); // Wait for 1 second before allowing the next coin to appear
+        }
+      }
+
+      setInterval(checkCollision, 100);
+
+      coin.addEventListener('click', function () {
+        score++;
+        document.getElementById('score').innerText = 'Score: ' + score;
+        isColliding = true;
+        coin.remove();
+        setTimeout(() => {
+          isColliding = false;
+          createCoin();
+        }, 1000); // Wait for 1 second before allowing the next coin to appear
+      });
+    }
+
+    document.addEventListener("keyup", (e) => {
+      var box0 = document.getElementById("class1");
+      var img = document.getElementById("img1");
+      if (e.code == "Space") {
+        img.src = "https://th.bing.com/th/id/OIP.Sd_KdUvTONCjGZsH-S4Z1gHaHa?w=183&h=183&c=7&r=0&o=5&pid=1.7";
+        jump += 10;
+        box0.style.transitionDuration = "0.2s";
+        box0.style.marginBottom = `760px`;
+      }
+      setTimeout(() => {
+        var box1 = document.getElementById("class1");
+        box1.style.transitionDuration = "2s";
+        box1.style.marginBottom = "230px";
+      }, 50);
+    });
+
+    document.addEventListener("keyup", (event2) => {
+      var img = document.getElementById("img1");
+      img.src = "https://th.bing.com/th/id/OIP._R_m1ZIVfCWfA9KSfClF5gHaHA?pid=ImgDet&rs=1";
+      var box1 = document.getElementById("class1");
+      if (event2.code == "ArrowRight") {
+        jump1 += 50;
+        box1.style.transitionDuration = "0.2s";
+        box1.style.marginLeft = `${jump1}px`;
+      }
+    });
+
+    document.addEventListener("keyup", (event1) => {
+      var box2 = document.getElementById("class1");
+      var img = document.getElementById("img1");
+      if (event1.code == "ArrowLeft") {
+        img.src = "https://th.bing.com/th/id/OIP.Sd_KdUvTONCjGZsH-S4Z1gHaHa?w=183&h=183&c=7&r=0&o=5&pid=1.7";
+        img.style.width = "200px";
+        img.style.height = "200px";
+        jump1 -= 50;
+        box2.style.transitionDuration = "0.2s";
+        box2.style.marginLeft = `${jump1}px`;
+      }
+    });
+
+    document.addEventListener("keyup", (event0) => {
+      var box3 = document.getElementById("class1");
+      if (event0.code == "ArrowDown") {
+        jump3 += 10;
+        box3.style.transitionDuration = "0.2s";
+        box3.style.marginBottom = `-${jump3}px`;
+      }
+    });
+
+    // Call createCoin when the game starts
+    createCoin();
+
+  </script>
+
+
+
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+
+</body>
+
+</html>
